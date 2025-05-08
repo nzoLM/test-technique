@@ -1,0 +1,34 @@
+[
+    {
+        "id": "1",
+        "type": "text",
+        "title": "What's your name ?",
+        "description": "Type your name here: "
+    },
+    {
+        "id": "2",
+        "type": "number",
+        "title": "How old are you ?",
+        "description": "Type your age here: "
+    },
+    {
+        "id": "3",
+        "type": "radio",
+        "title": "What's your gender ?",
+        "description": "Select your gender: ",
+        "options": ["Male", "Female", "Other"]
+    },
+    {
+        "id": "4",
+        "type": "multiselect",
+        "title": "what are your hobbies ?",
+        "description": "Select your hobbies: ",
+        "options": ["Reading", "Traveling", "Cooking", "Sports", "Music"]
+    },
+    {
+        "id": "5",
+        "type": "textarea",
+        "title": "About you ?",
+        "description": "You can tell what you want..."
+    }
+]
