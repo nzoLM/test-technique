@@ -7,26 +7,24 @@ import prisma from "@/lib/prisma";
 export async function answersSubmit(formData: FormData) {
   "use server";
   try {
-    const name = formData.get("name");
-    const age = formData.get("age");
-    const gender = formData.get("gender");
-    const about = formData.get("about");
-    const hobbies = formData.getAll("hobbies") as string[];
-
-    console.log({ name, age, gender, about, hobbies });
-
-    await prisma.response.create({
-      data: {
-        name: name as string,
-        age: Number(age),
-        gender: gender as string,
-        about: about as string,
-        hobbies,
-      },
-    });
-
-    revalidatePath("/test-technique");
-    redirect("/test-technique");
+    const data = {
+    name: formData.get("name"),
+    age: formData.get("age"),
+    gender: formData.get("gender"),
+    about: formData.get("about"),
+    hobbies: formData.getAll("hobbies"), // getAll si plusieurs inputs du même nom
+  };
+    console.log(data);
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `https://${process.env.VERCEL_URL}`;
+    const res  = await fetch(`${baseUrl}/api/submit`, {
+      method: "POST",
+        headers: {
+        "Content-Type": "application/json"},
+        "body": JSON.stringify(data),
+    })
+     if(!res.ok){
+        throw new Error("Échec de l'envoi du formulaire");
+     }
   } catch (err) {
     console.error("❌ Submit error:", err);
     throw err;
