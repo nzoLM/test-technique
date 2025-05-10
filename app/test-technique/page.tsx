@@ -1,6 +1,7 @@
 'use client';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { RadioGroupItem, RadioGroup } from "@/components/ui/radio-group";
 import {
   Select,
@@ -16,6 +17,7 @@ import { useState } from "react";
 
 export default function TestTechnique() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [selectedHobbies, setSelectedHobbies] = useState([]);
 
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
@@ -29,6 +31,13 @@ export default function TestTechnique() {
   }
 
   const question = questions[currentQuestion];
+
+  const formatOptions = (options) => {
+    return options?.map(option => ({
+      label: option,
+      value: option
+    })) || [];
+  };
 
   return (
     <div className="flex h-screen w-full items-center justify-center p-4">
@@ -49,11 +58,15 @@ export default function TestTechnique() {
             </RadioGroup>)}
           {
             question.type === "multiselect" && (
-                <select name="hobbies" id={question.id} multiple>
-                  {question.options?.map((value)=>(
-                    <option key={value} value={value}>{value}</option>
-                  ))}
-                </select>
+                <MultiSelect
+                  options={formatOptions(question.options)}
+                  onValueChange={setSelectedHobbies}
+                  defaultValue={selectedHobbies}
+                  placeholder="Select hobbies"
+                  variant="inverted"
+                  animation={2}
+                  maxCount={4}
+                />
                 )
           }
           {
@@ -63,14 +76,14 @@ export default function TestTechnique() {
           }
         </div>
         <div className="flex justify-between">
-          {currentQuestion > 0 && 
-                  <Button onClick={handlePrevious}>Previous</Button>
+          {currentQuestion === questions.length - 1 && 
+                  <Button type="submit">Submit</Button>
                   }
           {currentQuestion < questions.length - 1 && 
                   <Button className="self-start" onClick={handleNext}>Next</Button>
                   }
-          {currentQuestion === questions.length - 1 && 
-                  <Button type="submit">Submit</Button>
+          {currentQuestion > 0 && 
+                  <Button onClick={handlePrevious}>Previous</Button>
                   }
         </div>
 
