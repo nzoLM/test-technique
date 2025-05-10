@@ -9,6 +9,9 @@
     "lint": "next lint",
     "format": "prettier --write ."
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
     "@neondatabase/serverless": "^1.0.0",

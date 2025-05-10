@@ -1,5 +1,9 @@
 model Response {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  answers   Json
+  name      String
+  age       Int
+  gender    String
+  hobbies   String[] // @db.Text[] si PostgreSQL
+  about     String
 }
