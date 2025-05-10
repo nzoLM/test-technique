@@ -21,7 +21,7 @@
     {
         "id": "4",
         "type": "multiselect",
-        "title": "what are your hobbies ?",
+        "title": "What are your hobbies ?",
         "description": "Select your hobbies: ",
         "options": ["Reading", "Traveling", "Cooking", "Sports", "Music"]
     },
