@@ -12,7 +12,7 @@ export async function answersSubmit(formData: FormData) {
     console.log(data);
     let baseUrl;
     if (process.env.VERCEL_URL) {
-      baseUrl = `https://${process.env.VERCEL_URL}`;
+      baseUrl = process.env.VERCEL_URL;
     } else if (process.env.NEXT_PUBLIC_BASE_URL) {
       baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     } else {
@@ -20,7 +20,6 @@ export async function answersSubmit(formData: FormData) {
     }
 
     console.log("Base URL:", baseUrl);
-    
     const res = await fetch(`${baseUrl}/api/submit`, {
       method: "POST",
       headers: {
