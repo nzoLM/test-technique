@@ -1,7 +1,6 @@
 'use server';
 
 export async function answersSubmit(formData: FormData) {
-  "use server";
   try {
     const data = {
       name: formData.get("name"),
@@ -11,7 +10,15 @@ export async function answersSubmit(formData: FormData) {
       hobbies: formData.getAll("hobbies"), // getAll si plusieurs inputs du même nom
     };
     console.log(data);
-    const baseUrl = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_BASE_URL ;
+    let baseUrl;
+    if (process.env.VERCEL_URL) {
+      baseUrl = `https://${process.env.VERCEL_URL}`;
+    } else if (process.env.NEXT_PUBLIC_BASE_URL) {
+      baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    } else {
+      // Fallback pour le développement local
+      baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : '';
+    }
     const res = await fetch(`${baseUrl}/api/submit`, {
       method: "POST",
       headers: {
