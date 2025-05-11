@@ -11,7 +11,7 @@ export async function answersSubmit(formData: FormData) {
       hobbies: formData.getAll("hobbies"), // getAll si plusieurs inputs du même nom
     };
     console.log(data);
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `https://${process.env.VERCEL_URL}`;
+    const baseUrl = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_BASE_URL ;
     const res = await fetch(`${baseUrl}/api/submit`, {
       method: "POST",
       headers: {
