@@ -1,0 +1,20 @@
+model Response {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  name      String
+  age       Int
+  gender    String
+  hobbies   String[] // @db.Text[] si PostgreSQL
+  about     String
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder", "driverAdapters"]
+  output          = "./generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
