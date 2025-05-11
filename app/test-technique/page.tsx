@@ -2,7 +2,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { RadioGroupItem, RadioGroup } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import questions from "@/data/questions.json";
 import { useState, useRef } from "react";
@@ -49,7 +48,6 @@ export default function TestTechnique() {
     }
 
     formCurrent.current?.reset();
-    
     setSelectedHobbies([]);
   }
 
@@ -84,15 +82,22 @@ export default function TestTechnique() {
               )}
 
               {question.type === "radio" && (
-                <RadioGroup name="gender" id={question.id} required>
+                <div className="flex flex-col gap-2" id={question.id}>
                   {question.options?.map((value) => (
-                    <div key={value} className="space-x-2">
-                      <RadioGroupItem value={value} id={value} />
-                      <label htmlFor={value}>{value}</label>
-                    </div>
+                    <label key={value} className="inline-flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="gender"
+                        value={value}
+                        required
+                        className="form-radio text-blue-600 focus:ring-blue-500"
+                      />
+                      <span>{value}</span>
+                    </label>
                   ))}
-                </RadioGroup>
-              )}
+                </div>
+                )}
+
 
               {question.type === "multiselect" && (
                 <>
