@@ -12,7 +12,7 @@ export async function answersSubmit(formData: FormData) {
     console.log(data);
     let baseUrl;
     if (process.env.VERCEL_URL) {
-      baseUrl = `https://${process.env.VERCEL_URL}`;
+      baseUrl = `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
     } else if (process.env.NEXT_PUBLIC_BASE_URL) {
       baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     } else {
