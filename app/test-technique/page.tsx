@@ -3,92 +3,117 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { RadioGroupItem, RadioGroup } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-
 import questions from "@/data/questions.json";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { answersSubmit } from "@/app/actions/submit";
 
 export default function TestTechnique() {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedHobbies, setSelectedHobbies] = useState([]);
-
-  const handleNext = () => {
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion((prev) => prev + 1);
-    }
-  }
-  const handlePrevious = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion((prev) => prev - 1);
-    }
-  }
-
-  const question = questions[currentQuestion];
-
-  const formatOptions = (options) => {
+  const [selectedHobbies, setSelectedHobbies] = useState<string[]>([]);
+  const [status, setStatus] = useState<{
+    message: string;
+    type: 'success' | 'error' | 'none';
+    status?: number;
+  }>();
+  const formatOptions = (options: string[] | undefined) => {
     return options?.map(option => ({
       label: option,
       value: option
     })) || [];
   };
 
+  const handleError = async(formData : FormData) => {
+    const result = await answersSubmit(formData);
+    if(result?.error){
+      alert(result.error);
+      setStatus({
+        message : "Une erreur est survenue lors de la soumission du formulaire.",
+        type : 'error',
+        status : result.status
+      });
+    }else{
+      setStatus({
+        message : "Les données ont été envoyées avec succès.",
+        type : 'success',
+        status : result.status
+      });
+    }
+  }
+
   return (
-    <div className="flex h-screen w-full items-center justify-center p-4">
+    <div className="flex w-full items-center justify-center p-4">
       <div className="max-w-md w-full space-y-4">
+        {
+          status?.type === "success" && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+              {status?.message}
+            </div>
+          )
+        }
+        {
+          status?.type === "error" && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+              {status?.message}
+            </div>
+          )
+        }
+        <form action={handleError} className="flex flex-col gap-4">
+          {questions.map((question) => (
+            <div key={question.id} className="flex flex-col gap-2">
+              <label htmlFor={question.id}>{question.title}</label>
 
-        <div key={question.id} className="flex flex-col gap-2">
-          <label htmlFor={question.id}>{question.title}</label>
-          {question.type === "text" && <Input id={question.id} type="text" placeholder="Name..."></Input>}
-          {question.type === "number" && <Input id={question.id} type="number" placeholder="Age"></Input>}
-          {question.type === "radio" && (
-            <RadioGroup id={question.id}>
-              {question.options?.map((value) => (
-                <div key={value} className="space-x-2">
-                  <RadioGroupItem value={value} id={value}>{value}</RadioGroupItem>
-                  <label htmlFor={value}>{value}</label>
-                </div>
-              ))}
-            </RadioGroup>)}
-          {
-            question.type === "multiselect" && (
-                <MultiSelect
-                  options={formatOptions(question.options)}
-                  onValueChange={setSelectedHobbies}
-                  defaultValue={selectedHobbies}
-                  placeholder="Select hobbies"
-                  variant="inverted"
-                  animation={2}
-                  maxCount={4}
+              {question.type === "text" && (
+                <Input required name="name" id={question.id} type="text" placeholder="Name..." />
+              )}
+
+              {question.type === "number" && (
+                <Input required name="age" id={question.id} type="number" placeholder="Age" />
+              )}
+
+              {question.type === "radio" && (
+                <RadioGroup name="gender" id={question.id} required>
+                  {question.options?.map((value) => (
+                    <div key={value} className="space-x-2">
+                      <RadioGroupItem value={value} id={value} />
+                      <label htmlFor={value}>{value}</label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              )}
+
+              {question.type === "multiselect" && (
+                <>
+                  <MultiSelect
+                    required
+                    options={formatOptions(question.options)}
+                    onValueChange={setSelectedHobbies}
+                    defaultValue={selectedHobbies}
+                    placeholder="Select hobbies"
+                    variant="inverted"
+                    animation={2}
+                    maxCount={4}
+                  />
+                  {selectedHobbies.map((hobby, index) => (
+                    <input key={index} type="hidden" name="hobbies" value={hobby} />
+                  ))}
+                </>
+              )}
+
+              {question.type === "textarea" && (
+                <Textarea
+                  required
+                  name="about"
+                  id={question.id}
+                  cols={33}
+                  placeholder={question.description}
                 />
-                )
-          }
-          {
-            question.type === "textarea" && (
-              <Textarea name="about" id={question.id} cols={33} placeholder={question.description}></Textarea>
-            )
-          }
-        </div>
-        <div className="flex justify-between">
-          {currentQuestion === questions.length - 1 && 
-                  <Button type="submit">Submit</Button>
-                  }
-          {currentQuestion < questions.length - 1 && 
-                  <Button className="self-start" onClick={handleNext}>Next</Button>
-                  }
-          {currentQuestion > 0 && 
-                  <Button onClick={handlePrevious}>Previous</Button>
-                  }
-        </div>
+              )}
+            </div>
+          ))}
 
+          <Button type="submit">Submit</Button>
+        </form>
       </div>
     </div>
-  )
+  );
 }
-
