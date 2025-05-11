@@ -16,15 +16,18 @@ export async function answersSubmit(formData: FormData) {
     } else if (process.env.NEXT_PUBLIC_BASE_URL) {
       baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     } else {
-      // Fallback pour le développement local
       baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : '';
     }
+
+    console.log("Base URL:", baseUrl);
+    
     const res = await fetch(`${baseUrl}/api/submit`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       "body": JSON.stringify(data),
+      cache: 'no-store'
     })
     const responseData = await res.json();
     if (!res.ok) {
