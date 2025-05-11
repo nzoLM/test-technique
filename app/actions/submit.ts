@@ -19,7 +19,7 @@ export async function answersSubmit(formData: FormData) {
       baseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : '';
     }
     
-    const res = await fetch(`${baseUrl}/api/submit`, {
+    const res = await fetch(`/api/submit`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
