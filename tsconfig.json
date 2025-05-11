@@ -24,8 +24,11 @@
     ],
     "baseUrl": ".",
     "paths": {
+      "@/": [
+        "./",
+      ],
       "@/*": [
-        "./*"
+        "./*",
       ],
       "@prisma/client": [
         "./generated/prisma/index.d.ts"
