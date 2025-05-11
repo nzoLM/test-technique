@@ -5,7 +5,7 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { RadioGroupItem, RadioGroup } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import questions from "@/data/questions.json";
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import { answersSubmit } from "@/app/actions/submit";
 
 export default function TestTechnique() {
@@ -15,6 +15,8 @@ export default function TestTechnique() {
     type: 'success' | 'error' | 'none';
     status?: number;
   }>();
+  const formCurrent = useRef<HTMLFormElement>(null);
+
   const formatOptions = (options: string[] | undefined) => {
     return options?.map(option => ({
       label: option,
@@ -22,22 +24,33 @@ export default function TestTechnique() {
     })) || [];
   };
 
-  const handleError = async(formData : FormData) => {
+  const handleError = async (formData: FormData) => {
+    if (selectedHobbies.length === 0) {
+      setStatus({
+        message: "Veuillez sélectionner au moins un hobby.",
+        type: 'error',
+      });
+      return; // Stoppe la soumission
+    }
     const result = await answersSubmit(formData);
-    if(result?.error){
+    if (result?.error) {
       alert(result.error);
       setStatus({
-        message : "Une erreur est survenue lors de la soumission du formulaire.",
-        type : 'error',
-        status : result.status
+        message: "Une erreur est survenue lors de la soumission du formulaire.",
+        type: 'error',
+        status: result.status
       });
-    }else{
+    } else {
       setStatus({
-        message : "Les données ont été envoyées avec succès.",
-        type : 'success',
-        status : result.status
+        message: "Les données ont été envoyées avec succès.",
+        type: 'success',
+        status: result.status
       });
     }
+
+    formCurrent.current?.reset();
+    
+    setSelectedHobbies([]);
   }
 
   return (
@@ -84,14 +97,10 @@ export default function TestTechnique() {
               {question.type === "multiselect" && (
                 <>
                   <MultiSelect
-                    required
                     options={formatOptions(question.options)}
-                    onValueChange={setSelectedHobbies}
-                    defaultValue={selectedHobbies}
+                    onChange={setSelectedHobbies}
                     placeholder="Select hobbies"
-                    variant="inverted"
-                    animation={2}
-                    maxCount={4}
+                    value={selectedHobbies}
                   />
                   {selectedHobbies.map((hobby, index) => (
                     <input key={index} type="hidden" name="hobbies" value={hobby} />
