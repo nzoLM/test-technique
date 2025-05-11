@@ -19,15 +19,28 @@ export async function answersSubmit(formData: FormData) {
     const res  = await fetch(`${baseUrl}/api/submit`, {
       method: "POST",
         headers: {
-        "Content-Type": "application/json"},
+        "Content-Type": "application/json"
+      },
         "body": JSON.stringify(data),
     })
+    const responseData = await res.json();
      if(!res.ok){
-        throw new Error("Échec de l'envoi du formulaire");
+        return { 
+        error: responseData.error || "Échec de l'envoi du formulaire",
+        status: res.status 
+      };
+     }
+     return {
+      data: responseData,
+      status: res.status,
+      success: true
      }
   } catch (err) {
     console.error("❌ Submit error:", err);
-    throw err;
+    return { 
+      error: err,
+      status: 500 
+    };
   }
 }
 

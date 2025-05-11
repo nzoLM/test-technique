@@ -5,12 +5,16 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { RadioGroupItem, RadioGroup } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import questions from "@/data/questions.json";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { answersSubmit } from "@/app/actions/submit";
 
 export default function TestTechnique() {
   const [selectedHobbies, setSelectedHobbies] = useState<string[]>([]);
-
+  const [status, setStatus] = useState<{
+    message: string;
+    type: 'success' | 'error' | 'none';
+    status?: number;
+  }>();
   const formatOptions = (options: string[] | undefined) => {
     return options?.map(option => ({
       label: option,
@@ -18,10 +22,42 @@ export default function TestTechnique() {
     })) || [];
   };
 
+  const handleError = async(formData : FormData) => {
+    const result = await answersSubmit(formData);
+    if(result?.error){
+      alert(result.error);
+      setStatus({
+        message : "Une erreur est survenue lors de la soumission du formulaire.",
+        type : 'error',
+        status : result.status
+      });
+    }else{
+      setStatus({
+        message : "Les données ont été envoyées avec succès.",
+        type : 'success',
+        status : result.status
+      });
+    }
+  }
+
   return (
-    <div className="flex h-full w-full items-center justify-center p-4">
+    <div className="flex w-full items-center justify-center p-4">
       <div className="max-w-md w-full space-y-4">
-        <form action={answersSubmit} className="flex flex-col gap-4">
+        {
+          status?.type === "success" && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+              {status?.message}
+            </div>
+          )
+        }
+        {
+          status?.type === "error" && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+              {status?.message}
+            </div>
+          )
+        }
+        <form action={handleError} className="flex flex-col gap-4">
           {questions.map((question) => (
             <div key={question.id} className="flex flex-col gap-2">
               <label htmlFor={question.id}>{question.title}</label>
