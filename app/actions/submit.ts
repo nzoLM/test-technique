@@ -30,7 +30,7 @@ export async function answersSubmit(formData: FormData) {
     const responseData = await res.json();
     if (!res.ok) {
       return {
-        error: responseData.error || "Échec de l'envoi du formulaire",
+        error: responseData.error || "Failed to submit the form.",
         status: res.status
       };
     }
